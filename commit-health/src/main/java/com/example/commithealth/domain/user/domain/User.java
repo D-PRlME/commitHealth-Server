@@ -16,14 +16,11 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(length = 60, nullable = false)
-    private String accountId;
+    @Column(length = 40, nullable = false)
+    private String email;
 
     @Column(length = 60, nullable = false)
     private String password;
-
-    @Column(length = 40, nullable = false)
-    private String email;
 
     @Column(length = 5, nullable = false)
     private String studentId;
@@ -38,10 +35,9 @@ public class User {
     private Integer weight;
 
     @Builder
-    public User(String accountId, String password, String email, String studentId, String name, Integer height, Integer weight) {
-        this.accountId = accountId;
-        this.password = password;
+    public User(String email, String password, String studentId, String name) {
         this.email = email;
+        this.password = password;
         this.studentId = studentId;
         this.name = name;
     }

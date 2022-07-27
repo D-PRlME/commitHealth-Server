@@ -38,11 +38,11 @@ public class UserService {
     public TokenResponse login(LoginRequest request){
         User user = repository.findByEmail(request.getEmail())
                 .orElseThrow(() -> AuthNotFoundException.EXCEPTION);
-        if(encoder.matches(user.getPassword(), request.getPassword())){
+        if (!encoder.matches(request.getPassword(), user.getPassword())) {
+            throw PasswordMistMatchException.EXCEPTION;
+        } else
             return TokenResponse.builder()
                     .accessToken(jwtTokenProvider.generateAccessToken(user.getStudentId()))
                     .build();
-        }else
-            throw PasswordMistMatchException.EXCEPTION;
     }
 }

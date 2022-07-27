@@ -1,9 +1,14 @@
 package com.example.commithealth.domain.user.service;
 
+import com.example.commithealth.domain.user.controller.dto.request.LoginRequest;
 import com.example.commithealth.domain.user.controller.dto.request.SignupRequest;
 import com.example.commithealth.domain.user.domain.User;
 import com.example.commithealth.domain.user.domain.repository.UserRepository;
 import com.example.commithealth.domain.user.exception.AlreadyExistEmailException;
+import com.example.commithealth.domain.user.exception.PasswordMistMatchException;
+import com.example.commithealth.global.exception.AuthNotFoundException;
+import com.example.commithealth.global.security.jwt.JwtTokenProvider;
+import com.example.commithealth.global.security.jwt.TokenResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,6 +21,7 @@ public class UserService {
 
     private final PasswordEncoder encoder;
     private final UserRepository repository;
+    private final JwtTokenProvider jwtTokenProvider;
 
     public void signup(SignupRequest request) {
         Optional<User> user = repository.findByEmail(request.getEmail());
@@ -28,5 +34,15 @@ public class UserService {
                         .studentId(request.getStudentId())
                         .name(request.getName())
                         .build());
+    }
+    public TokenResponse login(LoginRequest request){
+        User user = repository.findByEmail(request.getEmail())
+                .orElseThrow(() -> AuthNotFoundException.EXCEPTION);
+        if(encoder.matches(user.getPassword(), request.getPassword())){
+            return TokenResponse.builder()
+                    .accessToken(jwtTokenProvider.generateAccessToken(user.getStudentId()))
+                    .build();
+        }else
+            throw PasswordMistMatchException.EXCEPTION;
     }
 }

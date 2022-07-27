@@ -4,19 +4,18 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
+import javax.validation.constraints.Email;
 
 @Getter
 @NoArgsConstructor
 public class SignupRequest {
-    @Column(nullable = false)
+
+    @Email(message = "이메일 형식에 맞춰주세요")
     private String email;
 
-    @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
     private String studentId;
 
-    @Column(nullable = false)
     private String name;
 }

@@ -41,4 +41,7 @@ public class User {
         this.studentId = studentId;
         this.name = name;
     }
+    public void updatePw(String password){
+        this.password = password;
+    }
 }

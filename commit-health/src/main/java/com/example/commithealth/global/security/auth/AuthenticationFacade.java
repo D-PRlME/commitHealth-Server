@@ -6,6 +6,7 @@ import com.example.commithealth.global.exception.AuthNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -13,9 +14,12 @@ import org.springframework.stereotype.Component;
 public class AuthenticationFacade {
     private final UserRepository repository;
     public User getCurrentUser(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        AuthDetails authDetails = (AuthDetails) authentication.getPrincipal();
-        return repository.findByEmail(authDetails.getUsername())
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return getUserByEmail(email);
+    }
+
+    public User getUserByEmail(String email){
+        return repository.findByEmail(email)
                 .orElseThrow(() -> AuthNotFoundException.EXCEPTION);
     }
 }
